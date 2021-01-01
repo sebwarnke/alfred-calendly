@@ -4,9 +4,7 @@
 import sys
 
 from workflow import Workflow3, PasswordNotFound
-from constants \
-    import __client_id__, __client_secret__, __cmd_client_creds__, __auth_code__, __cmd_authorize__, \
-    __authorization_url__, __cmd_start_flow__, __refresh_token__, __access_token__
+import constants as c
 
 log = None
 
@@ -22,15 +20,15 @@ def main(wf):
 
     client_is_registered = True
     try:
-        wf.get_password(__client_id__)
-        wf.get_password(__client_secret__)
+        wf.get_password(c.CLIENT_ID)
+        wf.get_password(c.CLIENT_SECRET)
     except PasswordNotFound:
         client_is_registered = False
 
     auth_code_exists = True
     try:
-        wf.get_password(__access_token__)
-        wf.get_password(__refresh_token__)
+        wf.get_password(c.ACCESS_TOKEN)
+        wf.get_password(c.REFRESH_TOKEN)
     except PasswordNotFound:
         auth_code_exists = False
 
@@ -39,10 +37,10 @@ def main(wf):
             wf.add_item(
                 title="No Calendly Client registered yet",
                 subtitle="Hit ENTER to proceed with registration.",
-                autocomplete="%s " % __cmd_client_creds__,
+                autocomplete="%s " % c.CMD_CLIENT_CREDS,
                 valid=False
             )
-        elif command == __cmd_client_creds__:
+        elif command == c.CMD_CLIENT_CREDS:
             if query == '':
                 wf.add_item(
                     title="Add Calendly OAuth Client Credentials and hit ENTER",
@@ -53,7 +51,7 @@ def main(wf):
                 wf.add_item(
                     title="Add Calendly OAuth Client Credentials and hit ENTER",
                     subtitle="Use Syntax: '<CLIENT_ID>:<CLIENT_SECRET>'",
-                    arg="%s %s" % (__cmd_client_creds__, query),
+                    arg="%s %s" % (c.CMD_CLIENT_CREDS, query),
                     valid=True
                 )
     elif auth_code_exists is False:
@@ -61,60 +59,26 @@ def main(wf):
             wf.add_item(
                 title="No Refresh Token and no Auth Code found",
                 subtitle="Hit ENTER to proceed.",
-                autocomplete="%s " % __cmd_authorize__,
+                autocomplete="%s " % c.CMD_AUTHORIZE,
                 valid=False
             )
-        elif command == __cmd_authorize__:
+        elif command == c.CMD_AUTHORIZE:
             if query == '':
                 wf.add_item(
                     title="Paste your Authorization Code here.",
                     subtitle="If you don't have one, simply press ENTER.",
-                    arg=__cmd_start_flow__,
+                    arg=c.CMD_START_FLOW,
                     valid=True
                 )
             else:
                 wf.add_item(
                     title="Add Calendly OAuth Client Credentials and hit ENTER",
                     subtitle="Use Syntax: '<CLIENT_ID>:<CLIENT_SECRET>'",
-                    arg="%s %s" % (__cmd_authorize__, query),
+                    arg="%s %s" % (c.CMD_AUTHORIZE, query),
                     valid=True
                 )
 
     wf.send_feedback()
-
-    # if args.query is not None:
-    #     log.debug("query=" + args.query)
-    #
-    # if args.client_id:
-    #     wf.save_password(__client_id__, args.client_id)
-    #
-    # if args.client_secret:
-    #     wf.save_password(__client_secret__, args.client_secret)
-    #
-    # if args.auth_code:
-    #     wf.save_password(__auth_code__, args.auth_code)
-    #
-    # try:
-    #     wf.get_password(__client_id__)
-    # except PasswordNotFound:
-    #     wf.add_item(
-    #         title="Set Client ID",
-    #         subtitle="The Client ID received from Calendly Client Registration",
-    #         autocomplete="client_id ",
-    #         valid=False
-    #     )
-    #
-    # try:
-    #     wf.get_password(__client_secret__)
-    # except PasswordNotFound:
-    #     wf.add_item(title="Set Client Secret")
-    #
-    # try:
-    #     wf.get_password(__auth_code__)
-    # except PasswordNotFound:
-    #     wf.add_item(title="Authorization Code")
-    #
-    # wf.send_feedback()
 
 
 if __name__ == '__main__':

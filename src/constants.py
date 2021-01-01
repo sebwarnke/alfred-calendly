@@ -1,13 +1,13 @@
-__client_id__ = "calendly_alfred_client_id"
-__client_secret__ = "calendly_alfred_client_secret"
-__auth_code__ = "calendly_alfred_auth_code"
+CLIENT_ID = "calendly_alfred_client_id"
+CLIENT_SECRET = "calendly_alfred_client_secret"
+AUTH_CODE = "calendly_alfred_auth_code"
 
-__cmd_client_creds__ = "set_client_creds"
-__cmd_authorize__ = "authorize"
+CMD_CLIENT_CREDS = "set_client_creds"
+CMD_AUTHORIZE = "authorize"
 
-__authorization_url__ = "https://auth.calendly.com/oauth/authorize?response_type=code&redirect_uri=https://www.calendly.sebwarnke.com&client_id="
-__token_url__ = "https://auth.calendly.com/oauth/token"
-__cmd_start_flow__ = "start_flow"
+AUTHORIZATION_URL = "https://auth.calendly.com/oauth/authorize?response_type=code&redirect_uri=https://www.calendly.sebwarnke.com&client_id="
+TOKEN_URL = "https://auth.calendly.com/oauth/token"
+CMD_START_FLOW = "start_flow"
 
-__access_token__ = "calendly_alfred_access_token"
-__refresh_token__ = "calendly_alfred_refresh_token"
+ACCESS_TOKEN = "calendly_alfred_access_token"
+REFRESH_TOKEN = "calendly_alfred_refresh_token"

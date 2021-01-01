@@ -6,8 +6,7 @@ import webbrowser
 from workflow import Workflow3, web
 from urllib2 import HTTPError
 
-from constants import __cmd_client_creds__, __client_id__, __client_secret__, __authorization_url__, __cmd_start_flow__, \
-    __cmd_authorize__, __token_url__, __refresh_token__, __access_token__
+import constants as c
 
 log = None
 
@@ -22,7 +21,7 @@ def main(wf):
 
     log.debug("%s : %s" % (command, query))
 
-    if command == __cmd_client_creds__:
+    if command == c.CMD_CLIENT_CREDS:
         credentials = query.split(":")
 
         if len(credentials) != 2:
@@ -30,20 +29,20 @@ def main(wf):
         else:
             client_id = query.split(":")[0]
             client_secret = query.split(":")[1]
-            wf.save_password(__client_id__, client_id)
-            wf.save_password(__client_secret__, client_secret)
+            wf.save_password(c.CLIENT_ID, client_id)
+            wf.save_password(c.CLIENT_SECRET, client_secret)
             print("Credentials saved for Client ID <%s>" % client_id)
 
-    elif command == __cmd_start_flow__:
-        client_id = wf.get_password(__client_id__)
-        webbrowser.open(__authorization_url__ + client_id)
+    elif command == c.CMD_START_FLOW:
+        client_id = wf.get_password(c.CLIENT_ID)
+        webbrowser.open(c.AUTHORIZATION_URL + client_id)
 
-    elif command == __cmd_authorize__:
-        client_id = wf.get_password(__client_id__)
-        client_secret = wf.get_password(__client_secret__)
+    elif command == c.CMD_AUTHORIZE:
+        client_id = wf.get_password(c.CLIENT_ID)
+        client_secret = wf.get_password(c.CLIENT_SECRET)
 
         response = web.post(
-            url=__token_url__,
+            url=c.TOKEN_URL,
             data={
                 "grant_type": "authorization_code",
                 "client_id": client_id,
@@ -69,8 +68,8 @@ def main(wf):
         if response.status_code == 200:
             json = response.json()
             log.debug(json)
-            wf.save_password(__access_token__, json["access_token"])
-            wf.save_password(__refresh_token__, json["refresh_token"])
+            wf.save_password(c.ACCESS_TOKEN, json["access_token"])
+            wf.save_password(c.REFRESH_TOKEN, json["refresh_token"])
             print("Calendly Access granted.")
 
 
