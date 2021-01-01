@@ -6,7 +6,7 @@ import sys
 from workflow import Workflow3, PasswordNotFound
 from constants \
     import __client_id__, __client_secret__, __cmd_client_creds__, __auth_code__, __cmd_authorize__, \
-    __authorization_url__, __cmd_start_flow__
+    __authorization_url__, __cmd_start_flow__, __refresh_token__, __access_token__
 
 log = None
 
@@ -29,7 +29,8 @@ def main(wf):
 
     auth_code_exists = True
     try:
-        wf.get_password(__auth_code__)
+        wf.get_password(__access_token__)
+        wf.get_password(__refresh_token__)
     except PasswordNotFound:
         auth_code_exists = False
 
@@ -75,7 +76,7 @@ def main(wf):
                 wf.add_item(
                     title="Add Calendly OAuth Client Credentials and hit ENTER",
                     subtitle="Use Syntax: '<CLIENT_ID>:<CLIENT_SECRET>'",
-                    arg="%s %s" % (__cmd_authorize__, __authorization_url__),
+                    arg="%s %s" % (__cmd_authorize__, query),
                     valid=True
                 )
 

@@ -15,12 +15,12 @@ def main(wf):
 
     url = "https://api.calendly.com/event_types"
     headers = {
-        "Authorization": "Bearer a0e09OkLaduy07Phku6aRfhEk_6YHxKjSE9mpQo1iMA",
+        "Authorization": "",
         "content-type": "application/json"
     }
 
     params = {
-        'user': 'https://api.calendly.com/users/CDHDEXGYU3DVXFDL'
+        'user': ''
     }
 
     response = web.get(url, headers=headers, params=params)
