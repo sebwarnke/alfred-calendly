@@ -35,14 +35,14 @@ def main(wf):
 
     elif command == c.CMD_START_FLOW:
         client_id = wf.get_password(c.CLIENT_ID)
-        webbrowser.open(c.AUTHORIZATION_URL + client_id)
+        webbrowser.open(c.CALENDLY_AUTHORIZATION_URL + client_id)
 
     elif command == c.CMD_AUTHORIZE:
         client_id = wf.get_password(c.CLIENT_ID)
         client_secret = wf.get_password(c.CLIENT_SECRET)
 
         response = web.post(
-            url=c.TOKEN_URL,
+            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
             data={
                 "grant_type": "authorization_code",
                 "client_id": client_id,

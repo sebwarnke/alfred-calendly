@@ -2,62 +2,143 @@
 # encoding: utf-8
 
 import sys
-from argparse import ArgumentParser
-# Workflow3 supports Alfred 3's new features. The `Workflow` class
-# is also compatible with Alfred 2.
-from workflow import Workflow3, web
+
+from workflow import Workflow3, PasswordNotFound, web
+from urllib2 import HTTPError
+import constants as c
+
+log = None
+
+
+def get_current_user():
+    log.debug("in: get_current_user")
+    try:
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+
+        response = web.get(
+            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_CURRENT_USER_URI),
+            headers={
+                "Authorization": "Bearer %s" % access_token,
+            }
+        )
+        log.debug("Response Status Code: %d", response.status_code)
+        response.raise_for_status()
+        if response.status_code == 200:
+            return response.json()["resource"]["uri"]
+        else:
+            raise Exception("Error whilst getting current user.")
+    except HTTPError:
+        raise Exception("Error whilst getting current user.")
+
+
+def get_event_types_for_user(current_user_uri):
+    log.debug("in: get_event_types_for_user")
+    try:
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+        response = web.get(
+            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_EVENT_TYPES_URI),
+            headers={
+                "Authorization": "Bearer %s" % access_token,
+            },
+            params={
+                "user": current_user_uri
+            }
+        )
+        response.raise_for_status()
+
+        if response.status_code == 200:
+            return response.json()["collection"]
+        else:
+            raise Exception("Error whilst getting current user.")
+    except HTTPError:
+        raise Exception("Error whilst getting current user.")
 
 
 def main(wf):
+    # type: (Workflow3) -> None
 
+    user_input = wf.args[0]
+    command = query = ""
+    if len(user_input) > 0:
+        command = user_input.split()[0]
+        query = user_input[len(command) + 1:]
 
+    try:
+        client_id = wf.get_password(c.CLIENT_ID)
+        client_secret = wf.get_password(c.CLIENT_SECRET)
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+        refresh_token = wf.get_password(c.REFRESH_TOKEN)
 
+        log.debug("Introspecting Access Token")
+        response = web.post(
+            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_INTROSPECT_URI),
+            data={
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "token": access_token
+            }
+        )
+        response.raise_for_status()
 
+        response_json = response.json()
+        if response_json["active"] is False:
+            log.debug("Refreshing Access Token.")
+            response = web.post(
+                url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
+                data={
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "refresh_token": refresh_token,
+                    "grant_type": "refresh_token"
+                }
+            )
+            response.raise_for_status()
 
+            if response.status_code == 200:
+                response_json = response.json()
+                wf.save_password(c.ACCESS_TOKEN, response_json["access_token"])
+                wf.save_password(c.REFRESH_TOKEN, response_json["refresh_token"])
 
-
-
-
-
-
-    parser = ArgumentParser()
-    args = parser.parse_args(wf.args)
-
-    url = "https://api.calendly.com/event_types"
-    headers = {
-        "Authorization": "",
-        "content-type": "application/json"
-    }
-
-    params = {
-        'user': ''
-    }
-
-    response = web.get(url, headers=headers, params=params)
-
-    # print("Response Code: " + str(response.status_code))
-    event_types = []
-    if response.status_code == 200:
-        event_types = response.json()['collection']
-
-    for event_type in event_types:
-        # print(event_type)
+    except PasswordNotFound:
         wf.add_item(
-            title=event_type["name"],
-            subtitle=event_type["scheduling_url"],
-            arg=event_type["scheduling_url"],
-            valid=True)
+            title="No Calendly Client registered yet.",
+            subtitle="Use 'cya' to start authentication flow.",
+            valid=False
+        )
+        wf.send_feedback()
+        return 0
 
-    # Send output to Alfred. You can only call this once.
-    # Well, you *can* call it multiple times, but subsequent calls
-    # are ignored (otherwise the JSON sent to Alfred would be invalid).
-    wf.send_feedback()
+    except HTTPError:
+        wf.add_item(
+            title="Authentication API Error",
+            subtitle="Calendly returned an error whilst checking your OAuth Access Token.",
+            valid=False
+        )
+        wf.send_feedback()
+        return 0
+
+    try:
+        current_user_uri = get_current_user()
+        event_types = get_event_types_for_user(current_user_uri)
+
+        for event_type in event_types:
+            wf.add_item(
+                title=event_type["name"],
+                subtitle=event_type["scheduling_url"],
+                valid=True,
+                arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
+            )
+    except Exception as e:
+        wf.add_item(
+            title="API Error",
+            subtitle=e.message,
+            valid=False
+        )
+    finally:
+        wf.send_feedback()
 
 
 if __name__ == '__main__':
-    # Create a global `Workflow3` object
     wf = Workflow3()
-    # Call your entry function via `Workflow3.run()` to enable its
-    # helper functions, like exception catching, ARGV normalization,
-    # magic arguments etc.
+    log = wf.logger
     sys.exit(wf.run(main))
