@@ -140,7 +140,7 @@ def main(wf):
         wf.send_feedback()
     elif command == c.CMD_SINGLE_USE_LINK:
         try:
-            event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user)
+            event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user, max_age=600)
             for event_type in event_types:
                 wf.add_item(
                     title=event_type["name"],
