@@ -121,6 +121,13 @@ def refresh_event_types_conditionally():
         wf.cache_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user())
 
 
+def get_search_key_for_event_types(event_type):
+    elements = [
+        event_type['name'],
+        event_type['scheduling_url']
+    ]
+    return u' '.join(elements)
+
 def main(wf):
     # type: (Workflow3) -> None
 
@@ -142,6 +149,10 @@ def main(wf):
     elif command == c.CMD_SINGLE_USE_LINK:
         try:
             event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user, max_age=0)
+
+            if query != "":
+                event_types = wf.filter(query, event_types, key=get_search_key_for_event_types, min_score=20)
+
             for event_type in event_types:
                 wf.add_item(
                     title=event_type["name"],
