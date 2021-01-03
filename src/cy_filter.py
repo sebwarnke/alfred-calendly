@@ -10,59 +10,7 @@ import constants as c
 log = None
 
 
-def get_current_user():
-    log.debug("in: get_current_user")
-    try:
-        access_token = wf.get_password(c.ACCESS_TOKEN)
-
-        response = web.get(
-            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_CURRENT_USER_URI),
-            headers={
-                "Authorization": "Bearer %s" % access_token,
-            }
-        )
-        log.debug("Response Status Code: %d", response.status_code)
-        response.raise_for_status()
-        if response.status_code == 200:
-            return response.json()["resource"]["uri"]
-        else:
-            raise Exception("Error whilst getting current user.")
-    except HTTPError:
-        raise Exception("Error whilst getting current user.")
-
-
-def get_event_types_for_user(current_user_uri):
-    log.debug("in: get_event_types_for_user")
-    try:
-        access_token = wf.get_password(c.ACCESS_TOKEN)
-        response = web.get(
-            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_EVENT_TYPES_URI),
-            headers={
-                "Authorization": "Bearer %s" % access_token,
-            },
-            params={
-                "user": current_user_uri
-            }
-        )
-        response.raise_for_status()
-
-        if response.status_code == 200:
-            return response.json()["collection"]
-        else:
-            raise Exception("Error whilst getting current user.")
-    except HTTPError:
-        raise Exception("Error whilst getting current user.")
-
-
-def main(wf):
-    # type: (Workflow3) -> None
-
-    user_input = wf.args[0]
-    command = query = ""
-    if len(user_input) > 0:
-        command = user_input.split()[0]
-        query = user_input[len(command) + 1:]
-
+def introspect_and_conditionally_refresh_access_token():
     try:
         client_id = wf.get_password(c.CLIENT_ID)
         client_secret = wf.get_password(c.CLIENT_SECRET)
@@ -117,25 +65,98 @@ def main(wf):
         wf.send_feedback()
         return 0
 
-    try:
-        current_user_uri = get_current_user()
-        event_types = get_event_types_for_user(current_user_uri)
 
-        for event_type in event_types:
-            wf.add_item(
-                title=event_type["name"],
-                subtitle=event_type["scheduling_url"],
-                valid=True,
-                arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
-            )
-    except Exception as e:
+def get_current_user():
+    log.debug("in: get_current_user")
+    try:
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+
+        response = web.get(
+            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_CURRENT_USER_URI),
+            headers={
+                "Authorization": "Bearer %s" % access_token,
+            }
+        )
+        log.debug("Response Status Code: %d", response.status_code)
+        response.raise_for_status()
+        if response.status_code == 200:
+            return response.json()["resource"]["uri"]
+        else:
+            raise Exception("Error whilst getting current user.")
+    except HTTPError:
+        raise Exception("Error whilst getting current user.")
+
+
+def get_event_types_for_user(current_user_uri):
+    log.debug("in: get_event_types_for_user")
+    try:
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+        response = web.get(
+            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_EVENT_TYPES_URI),
+            headers={
+                "Authorization": "Bearer %s" % access_token,
+            },
+            params={
+                "user": current_user_uri
+            }
+        )
+        response.raise_for_status()
+
+        if response.status_code == 200:
+            return response.json()["collection"]
+        else:
+            raise Exception("Error whilst getting current user.")
+    except HTTPError:
+        raise Exception("Error whilst getting current user.")
+
+
+def get_event_types_for_current_user():
+    introspect_and_conditionally_refresh_access_token()
+    current_user = get_current_user()
+    return get_event_types_for_user(current_user)
+
+
+def refresh_event_types_conditionally():
+    if wf.cached_data_age(c.CACHE_EVENT_TYPES) > 300:
+        wf.cache_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user())
+
+
+def main(wf):
+    # type: (Workflow3) -> None
+
+    user_input = wf.args[0]
+    command = query = ""
+    if len(user_input) > 0:
+        log.debug("Input: %s" % user_input)
+        command = user_input.split()[0]
+        query = user_input[len(command) + 1:]
+
+    if command == "":
         wf.add_item(
-            title="API Error",
-            subtitle=e.message,
+            title="Create Single-Use-Link",
+            autocomplete="%s " % c.CMD_SINGLE_USE_LINK,
             valid=False
         )
-    finally:
         wf.send_feedback()
+    elif command == c.CMD_SINGLE_USE_LINK:
+        try:
+            event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user)
+            for event_type in event_types:
+                wf.add_item(
+                    title=event_type["name"],
+                    subtitle=event_type["scheduling_url"],
+                    valid=True,
+                    arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
+                )
+        except Exception as e:
+            wf.add_item(
+                title="API Error",
+                subtitle=e.message,
+                valid=False
+            )
+        finally:
+            wf.send_feedback()
+            refresh_event_types_conditionally()
 
 
 if __name__ == '__main__':

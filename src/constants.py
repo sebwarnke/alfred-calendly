@@ -10,6 +10,9 @@ CLIENT_SECRET = "calendly_alfred_client_secret"
 ACCESS_TOKEN = "calendly_alfred_access_token"
 REFRESH_TOKEN = "calendly_alfred_refresh_token"
 
+# Cache IDs
+CACHE_EVENT_TYPES = "event_types"
+
 # URLs
 CALENDLY_AUTH_BASE_URL = "https://auth.calendly.com/oauth"
 CALENDLY_API_BASE_URL = "https://api.calendly.com"
