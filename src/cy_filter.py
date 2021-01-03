@@ -134,13 +134,14 @@ def main(wf):
     if command == "":
         wf.add_item(
             title="Create Single-Use-Link",
+            subtitle="Copies the Single-Use-Link to the Clipboard.",
             autocomplete="%s " % c.CMD_SINGLE_USE_LINK,
             valid=False
         )
         wf.send_feedback()
     elif command == c.CMD_SINGLE_USE_LINK:
         try:
-            event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user, max_age=600)
+            event_types = wf.cached_data(c.CACHE_EVENT_TYPES, get_event_types_for_current_user, max_age=0)
             for event_type in event_types:
                 wf.add_item(
                     title=event_type["name"],
