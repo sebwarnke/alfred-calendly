@@ -6,7 +6,7 @@
 
 ### Requesting Single-Use-Links for Event Types
 
-![alfred-calendly](alfred-calendly.gif)
+![alfred-calendly](single_use_link.gif)
 
 *More to come*
 
