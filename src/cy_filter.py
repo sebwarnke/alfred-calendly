@@ -43,6 +43,16 @@ def verify_configuration_exists():
 def main(wf):
     # type: (Workflow3) -> None
 
+    log.debug("Current Version: %s", wf.version)
+
+    if wf.update_available:
+        wf.add_item(
+            title="Now Workflow Version Available!",
+            subtitle="Activate this action in order to run the update.",
+            valid="False",
+            autocomplete="workflow:update"
+        )
+
     try:
         verify_configuration_exists()
     except PasswordNotFound:
@@ -97,8 +107,12 @@ def main(wf):
         wf.send_feedback()
 
 
-if __name__ == '__main__':
-    wf = Workflow3()
+if __name__ == "__main__":
+    wf = Workflow3(
+        update_settings={
+            "github_slug": "sebwarnke/alfred-calendly",
+            "prereleases": True
+        }
+    )
     log = wf.logger
-    wf.settings["bar"] = "baz"
     sys.exit(wf.run(main))
