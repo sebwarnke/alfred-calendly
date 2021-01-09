@@ -259,7 +259,7 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>This workflow intergrate Calendly API v2.</string>
+	<string>This workflow integrates Calendly API v2.</string>
 	<key>uidata</key>
 	<dict>
 		<key>02DBE0F9-4D8E-454A-B99D-2626D05DA3B8</key>
@@ -306,7 +306,7 @@
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>0.3.0</string>
+	<string>0.4.0-snapshot</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
