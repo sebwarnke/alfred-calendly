@@ -12,7 +12,7 @@ log = None
 
 
 def store_in_clipboard(clip):
-    command = "echo %s | pbcopy" % clip.strip()
+    command = "printf %s | pbcopy" % clip.strip()
     os.system(command)
 
 
