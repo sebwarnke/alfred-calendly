@@ -167,6 +167,29 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python auth_handler.py "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>02DBE0F9-4D8E-454A-B99D-2626D05DA3B8</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -234,32 +257,18 @@
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>python auth_handler.py "{query}"</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>02DBE0F9-4D8E-454A-B99D-2626D05DA3B8</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
 	</array>
 	<key>readme</key>
-	<string>This workflow integrates Calendly API v2.</string>
+	<string>This workflow integrates Calendly API v2.
+
+# Change Log:
+
+0.3.1
+- Fixes a bug that adds a trailing new line character to the single-use-link
+
+0.3.0
+- Workflow allows creation of Single Use Links for all existing Event Types in Calendly
+- Workflow allows OAuth login and frequent renewal</string>
 	<key>uidata</key>
 	<dict>
 		<key>02DBE0F9-4D8E-454A-B99D-2626D05DA3B8</key>
@@ -306,7 +315,7 @@
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>0.4.0-snapshot</string>
+	<string>0.3.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
