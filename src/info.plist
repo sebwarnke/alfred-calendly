@@ -263,6 +263,9 @@
 
 # Change Log:
 
+0.4.0
+- Adds CMD modifier in Single-Use-Link Event Type List which opens static URL in browser, instead of requesting the Single-Use-Link.
+
 0.3.1
 - Fixes a bug that adds a trailing new line character to the single-use-link
 
