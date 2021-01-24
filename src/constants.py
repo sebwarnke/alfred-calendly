@@ -3,6 +3,7 @@ CMD_CLIENT_CREDS = "set_client_creds"
 CMD_AUTHORIZE = "authorize"
 CMD_START_FLOW = "start_flow"
 CMD_SINGLE_USE_LINK = "single_use_link"
+CMD_BROWSE_URL = "browse_url"
 
 # Passwords
 CLIENT_ID = "calendly_alfred_client_id"

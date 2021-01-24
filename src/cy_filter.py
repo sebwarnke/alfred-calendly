@@ -94,6 +94,11 @@ def main(wf):
                 subtitle=event_type["scheduling_url"],
                 valid=True,
                 arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
+            ).add_modifier(
+                "cmd",
+                subtitle="Open Static Link of this Event Type in Browser.",
+                valid=True,
+                arg="%s %s" % (c.CMD_BROWSE_URL, event_type["scheduling_url"])
             )
         wf.send_feedback()
 

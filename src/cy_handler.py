@@ -3,6 +3,7 @@
 
 import sys
 import os
+import webbrowser
 from workflow import Workflow3, web
 from urllib2 import HTTPError
 
@@ -60,6 +61,8 @@ def main(wf):
             print("Link stored in Clipboard: %s" % single_use_link)
         except Exception as e:
             print(e.message)
+    elif command == c.CMD_BROWSE_URL:
+        webbrowser.open(query)
 
 
 if __name__ == u"__main__":
