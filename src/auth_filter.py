@@ -119,7 +119,7 @@ def main(wf):
 
     wf.add_item(
         title="Reset Authentication",
-        subtitle="This remove all local data.",
+        subtitle="This removes all local data.",
         autocomplete="%s" % c.CMD_RESET,
         valid=False,
         icon=ICON_EJECT
