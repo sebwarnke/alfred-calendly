@@ -263,6 +263,11 @@
 
 # Change Log:
 
+1.0.0
+- The redirect URI which is called back during authorization with Calendly is now configurable.
+- Adds capability to reset configuration with `cya reset`
+- ... and to logout with `cy logout`. Both the above and this call the same implementation.
+
 0.4.0
 - Adds CMD modifier in Single-Use-Link Event Type List which opens static URL in browser, instead of requesting the Single-Use-Link.
 
@@ -318,7 +323,7 @@
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>0.5.0-snapshot</string>
+	<string>1.0.0-snapshot</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
