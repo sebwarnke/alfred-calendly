@@ -116,7 +116,7 @@ if __name__ == "__main__":
     wf = Workflow3(
         update_settings={
             "github_slug": "sebwarnke/alfred-calendly",
-            "prereleases": True
+            "prereleases": False
         }
     )
     log = wf.logger
