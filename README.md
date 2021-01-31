@@ -12,7 +12,7 @@
 
 - To use this workflow you need a payed Calendly subscription.
 - Have a Oauth client registered at Calendly. To do so, follow [these steps](calendly.stoplight.io).
-- You need to provide Calendly with a Redirect URI which they use to call you back with an Authorization Token. You can use `http://localhost`keep this URI for the following configuration of the workflow.
+- You need to provide Calendly with a Redirect URI which they use to call you back with an Authorization Token. You can use `http://localhost` or anything moe meaningful to your use case. But keep this URI for the following configuration of the workflow.
 - As a result of the registration, Calendly will provide you with some initial credentials. You need them to configure the workflow:
   - Oauth Client ID
   - Oauth Client Secret
