@@ -3,9 +3,8 @@
 
 import sys
 
-from workflow import Workflow3, PasswordNotFound, ICON_ACCOUNT
-from workflow.background import run_in_background, is_running
-from urllib2 import HTTPError
+from workflow import Workflow3, PasswordNotFound, ICON_ACCOUNT, ICON_EJECT
+from workflow.background import run_in_background
 import constants as c
 
 log = None
