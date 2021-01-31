@@ -30,7 +30,7 @@
 5. In Alfred, enter `cya` again, follow the instructions to authorize the workflow towards Calendly.
    - This opens Calendly in a Web Browser. Follow the instructions there.
    - In the end you will be redirected to your redirect uri.
-6. From the Redirect URL, copy the value of the `code` get-parameter. This your Authorization Code,
+6. From the Redirect URL, copy the value of the `code` get-parameter. This is your Authorization Code,
 7. In Alfred, enter `cya` once more and follow the instructions. You will be asked to paste the Authorization Code received in step 6.
 8. Congratulations, you've passed the Oauth flow.
 
