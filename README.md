@@ -37,3 +37,15 @@
 ### I did some thing wrong!
 
 No worries, just call `cya reset` to start from step 3. again.
+
+## Build it your own
+
+1. Download or clone this repository
+
+2. Enter directory and call
+
+   ```
+   $ make && open -a Alfred\ 4 Alfred-Calendly.alfredworkflow
+   ```
+
+   
