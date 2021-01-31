@@ -5,6 +5,7 @@ import sys
 import webbrowser
 from workflow import Workflow3, web
 from urllib2 import HTTPError
+from api_helper import reset_workflow_config
 
 import constants as c
 
@@ -83,13 +84,8 @@ def main(wf):
             print("Calendly Access granted.")
 
     elif command == c.CMD_RESET:
-        wf.settings.clear()
         try:
-            wf.delete_password(c.CLIENT_ID)
-            wf.delete_password(c.CLIENT_SECRET)
-            wf.delete_password(c.REFRESH_TOKEN)
-            wf.delete_password(c.ACCESS_TOKEN)
-            wf.clear_cache()
+            reset_workflow_config(wf)
         finally:
             print("All local data deleted.")
 

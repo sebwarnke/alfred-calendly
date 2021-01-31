@@ -59,3 +59,12 @@ def get_event_types_for_current_user():
 
     current_user = get_current_user()
     return get_event_types_for_user(current_user)
+
+
+def reset_workflow_config(wf):
+    wf.clear_settings()
+    wf.clear_cache()
+    wf.delete_password(c.CLIENT_ID)
+    wf.delete_password(c.CLIENT_SECRET)
+    wf.delete_password(c.REFRESH_TOKEN)
+    wf.delete_password(c.ACCESS_TOKEN)
