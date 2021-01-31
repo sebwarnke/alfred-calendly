@@ -38,6 +38,17 @@ def main(wf):
     except PasswordNotFound:
         auth_code_exists = False
 
+    if command == c.CMD_RESET:
+        wf.add_item(
+            title="Reset Authentication",
+            subtitle="This remove all local data. ARE YOU SURE?",
+            arg="%s" % c.CMD_RESET,
+            valid=True,
+            icon=ICON_EJECT
+        )
+        wf.send_feedback()
+        return 0
+
     if client_is_registered is False:
         if command == "":
             wf.add_item(
@@ -105,6 +116,14 @@ def main(wf):
                     arg="%s %s" % (c.CMD_AUTHORIZE, query),
                     valid=True
                 )
+
+    wf.add_item(
+        title="Reset Authentication",
+        subtitle="This remove all local data.",
+        autocomplete="%s" % c.CMD_RESET,
+        valid=False,
+        icon=ICON_EJECT
+    )
 
     wf.send_feedback()
 

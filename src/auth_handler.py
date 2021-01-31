@@ -82,6 +82,17 @@ def main(wf):
             wf.save_password(c.REFRESH_TOKEN, json["refresh_token"])
             print("Calendly Access granted.")
 
+    elif command == c.CMD_RESET:
+        wf.settings.clear()
+        try:
+            wf.delete_password(c.CLIENT_ID)
+            wf.delete_password(c.CLIENT_SECRET)
+            wf.delete_password(c.REFRESH_TOKEN)
+            wf.delete_password(c.ACCESS_TOKEN)
+            wf.clear_cache()
+        finally:
+            print("All local data deleted.")
+
 
 if __name__ == u"__main__":
     wf = Workflow3()
