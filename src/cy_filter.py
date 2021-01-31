@@ -81,25 +81,25 @@ def main(wf):
         if query != "":
             event_types = wf.filter(query, event_types, key=get_search_key_for_event_types, min_score=20)
 
-        if len(event_types) == 0:
+        if event_types is None or len(event_types) == 0:
             wf.add_item(
                 title="No Event Types found.",
                 subtitle="... no events you could miss, though.",
                 valid=False
             )
-
-        for event_type in event_types:
-            wf.add_item(
-                title=event_type["name"],
-                subtitle=event_type["scheduling_url"],
-                valid=True,
-                arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
-            ).add_modifier(
-                "cmd",
-                subtitle="Open Static Link of this Event Type in Browser.",
-                valid=True,
-                arg="%s %s" % (c.CMD_BROWSE_URL, event_type["scheduling_url"])
-            )
+        else:
+            for event_type in event_types:
+                wf.add_item(
+                    title=event_type["name"],
+                    subtitle=event_type["scheduling_url"],
+                    valid=True,
+                    arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
+                ).add_modifier(
+                    "cmd",
+                    subtitle="Open Static Link of this Event Type in Browser.",
+                    valid=True,
+                    arg="%s %s" % (c.CMD_BROWSE_URL, event_type["scheduling_url"])
+                )
         wf.send_feedback()
 
     else:
