@@ -3,7 +3,7 @@
 
 import sys
 
-from workflow import Workflow3, PasswordNotFound
+from workflow import Workflow3, PasswordNotFound, ICON_EJECT
 import constants as c
 
 log = None
@@ -24,6 +24,12 @@ def main(wf):
         wf.get_password(c.CLIENT_SECRET)
     except PasswordNotFound:
         client_is_registered = False
+
+    redirect_back_url = wf.settings.get(c.CONF_REDIRECT_URL)
+    if redirect_back_url is None:
+        redirect_url_is_set = False
+    else:
+        redirect_url_is_set = True
 
     auth_code_exists = True
     try:
@@ -53,6 +59,28 @@ def main(wf):
                     subtitle="Use Syntax: '<CLIENT_ID>:<CLIENT_SECRET>'",
                     arg="%s %s" % (c.CMD_CLIENT_CREDS, query),
                     valid=True
+                )
+    elif redirect_url_is_set is False:
+        if command == "":
+            wf.add_item(
+                title="No Oauth redirect uri set yet.",
+                subtitle="Hit ENTER to proceed.",
+                autocomplete="%s " % c.CMD_REDIRECT_URI,
+                valid=False
+            )
+        elif command == c.CMD_REDIRECT_URI:
+            if query == '':
+                wf.add_item(
+                    title="Enter your redirect uri.",
+                    subtitle="This must comply with the URI defined during client registration.",
+                    valid=False
+                )
+            else:
+                wf.add_item(
+                    title="Enter your redirect uri.",
+                    subtitle="This must comply with the URI defined during client registration.",
+                    valid=True,
+                    arg="%s %s" % (c.CMD_REDIRECT_URI, query)
                 )
     elif auth_code_exists is False:
         if command == "":

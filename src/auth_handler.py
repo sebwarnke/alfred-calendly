@@ -11,6 +11,12 @@ import constants as c
 log = None
 
 
+def build_authorization_url(client_id):
+    return c.CALENDLY_AUTHORIZATION_URL_BASE \
+        + "&%s=%s" % (c.CALENDLY_AUTHORIZATION_URL_PARAM_REDIRECT_URL, wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")) \
+        + "&%s=%s" % (c.CALENDLY_AUTHORIZATION_URL_PARAM_CLIENT_ID, client_id)
+
+
 def main(wf):
     # type: (Workflow3) -> None
 
@@ -35,7 +41,11 @@ def main(wf):
 
     elif command == c.CMD_START_FLOW:
         client_id = wf.get_password(c.CLIENT_ID)
-        webbrowser.open(c.CALENDLY_AUTHORIZATION_URL + client_id)
+        webbrowser.open(build_authorization_url(client_id))
+
+    elif command == c.CMD_REDIRECT_URI:
+        wf.settings[c.CONF_REDIRECT_URL] = query
+        print("Redirect URL saved in Workflow Settings.")
 
     elif command == c.CMD_AUTHORIZE:
         client_id = wf.get_password(c.CLIENT_ID)
