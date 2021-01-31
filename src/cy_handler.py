@@ -63,6 +63,16 @@ def main(wf):
             print(e.message)
     elif command == c.CMD_BROWSE_URL:
         webbrowser.open(query)
+    elif command == c.CMD_LOGOUT:
+        wf.settings.clear()
+        try:
+            wf.delete_password(c.CLIENT_ID)
+            wf.delete_password(c.CLIENT_SECRET)
+            wf.delete_password(c.REFRESH_TOKEN)
+            wf.delete_password(c.ACCESS_TOKEN)
+            wf.clear_cache()
+        finally:
+            print("All local data deleted.")
 
 
 if __name__ == u"__main__":

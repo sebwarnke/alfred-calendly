@@ -100,13 +100,28 @@ def main(wf):
                     arg="%s %s" % (c.CMD_BROWSE_URL, event_type["scheduling_url"])
                 )
         wf.send_feedback()
-
+    elif command == c.CMD_LOGOUT:
+        wf.add_item(
+            title="Logout from Calendly",
+            subtitle="This detaches the workflow from the currently logged in account. ARE YOU SURE?",
+            arg="%s" % c.CMD_LOGOUT,
+            valid=True,
+            icon=ICON_EJECT
+        )
+        wf.send_feedback()
     else:
         wf.add_item(
             title="Create Single-Use-Link",
             subtitle="Copies the Single-Use-Link to the Clipboard.",
             autocomplete="%s " % c.CMD_SINGLE_USE_LINK,
             valid=False
+        )
+        wf.add_item(
+            title="Logout from Calendly",
+            subtitle="This detaches the workflow from the currently logged in account.",
+            autocomplete="%s" % c.CMD_LOGOUT,
+            valid=False,
+            icon=ICON_EJECT
         )
         wf.send_feedback()
 

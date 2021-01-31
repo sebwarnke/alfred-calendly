@@ -5,6 +5,8 @@ CMD_AUTHORIZE = "authorize"
 CMD_START_FLOW = "start_flow"
 CMD_SINGLE_USE_LINK = "single_use_link"
 CMD_BROWSE_URL = "browse_url"
+CMD_LOGOUT = "logout"
+CMD_RESET = "reset"
 
 # Passwords
 CLIENT_ID = "calendly_alfred_client_id"
