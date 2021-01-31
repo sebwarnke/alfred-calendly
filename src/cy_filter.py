@@ -47,7 +47,7 @@ def main(wf):
 
     if wf.update_available:
         wf.add_item(
-            title="Now Workflow Version Available!",
+            title="New Workflow Version Available!",
             subtitle="Activate this action in order to run the update.",
             valid="False",
             autocomplete="workflow:update"
