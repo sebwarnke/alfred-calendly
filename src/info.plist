@@ -263,6 +263,9 @@
 
 # Change Log:
 
+1.0.1
+- Fixes a bug that showed invalid a description during auth flow. (Thanks to David)
+
 1.0.0
 - The redirect URI which is called back during authorization with Calendly is now configurable.
 - Adds capability to reset configuration with `cya reset`
@@ -323,7 +326,7 @@
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
