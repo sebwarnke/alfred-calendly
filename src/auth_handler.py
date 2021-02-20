@@ -51,6 +51,7 @@ def main(wf):
     elif command == c.CMD_AUTHORIZE:
         client_id = wf.get_password(c.CLIENT_ID)
         client_secret = wf.get_password(c.CLIENT_SECRET)
+        redirect_uri = wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
 
         response = web.post(
             url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
@@ -59,13 +60,14 @@ def main(wf):
                 "client_id": client_id,
                 "client_secret": client_secret,
                 "code": query,
-                "redirect_uri": "https://www.calendly.sebwarnke.com"
+                "redirect_uri": redirect_uri
             }
         )
 
         log.debug("ID: %s" % client_id)
         log.debug("Secret: %s" % client_secret)
         log.debug("Code: %s" % query)
+        log.debug("Redirect URI: %s" % redirect_uri)
 
         try:
             response.raise_for_status()
