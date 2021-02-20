@@ -263,6 +263,9 @@
 
 # Change Log:
 
+1.0.2
+- Fixes a bug that prevented loading redirect uri during auth flow that was set by user. (Thanks to David, again)
+
 1.0.1
 - Fixes a bug that showed invalid a description during auth flow. (Thanks to David)
 
