@@ -16,6 +16,7 @@ REFRESH_TOKEN = "calendly_alfred_refresh_token"
 
 # Settings
 CONF_REDIRECT_URL = "redirect_url"
+CONF_SINGLE_USE_LINK_COUNTER = "single_use_link_counter"
 
 # Cache IDs
 CACHE_EVENT_TYPES = "event_types"

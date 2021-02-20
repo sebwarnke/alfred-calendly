@@ -43,6 +43,10 @@ def get_single_use_link(owner, access_token):
         raise Exception("Error whilst getting single use link.")
 
 
+def increment_usage_counter(uri):
+    counterwf.settings.get(c.CONF_SINGLE_USE_LINK_COUNTER)
+
+
 def main(wf):
     # type: (Workflow3) -> None
 
@@ -58,6 +62,7 @@ def main(wf):
     if command == c.CMD_SINGLE_USE_LINK:
         try:
             single_use_link = get_single_use_link(query, access_token)
+            increment_usage_counter(query)
             store_in_clipboard(single_use_link)
             print("Link stored in Clipboard: %s" % single_use_link)
         except Exception as e:
