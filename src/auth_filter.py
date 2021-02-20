@@ -111,8 +111,8 @@ def main(wf):
                 )
             else:
                 wf.add_item(
-                    title="Add Calendly OAuth Client Credentials and hit ENTER",
-                    subtitle="Use Syntax: '<CLIENT_ID>:<CLIENT_SECRET>'",
+                    title="Hit ENTER to set your Authorization Code.",
+                    subtitle="This finalizes the Authentication. Afterwards, use command 'cy' to use this workflow.",
                     arg="%s %s" % (c.CMD_AUTHORIZE, query),
                     valid=True
                 )
