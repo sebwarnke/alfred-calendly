@@ -3,13 +3,10 @@
 
 import sys
 import webbrowser
-from workflow import Workflow3, web
-from urllib2 import HTTPError
+from workflow import Workflow3, web, notify
+from calendly_client import CalendlyClient
 from api_helper import reset_workflow_config
-
 import constants as c
-
-log = None
 
 
 def build_authorization_url(client_id):
@@ -20,6 +17,14 @@ def build_authorization_url(client_id):
 
 def main(wf):
     # type: (Workflow3) -> None
+
+    log = wf.logger
+
+    calendly_client = CalendlyClient(
+        wf.get_password(c.CLIENT_ID),
+        wf.get_password(c.CLIENT_SECRET),
+        wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
+    )
 
     user_input = ''.join(wf.args)
 
@@ -49,41 +54,20 @@ def main(wf):
         print("Redirect URL saved in Workflow Settings.")
 
     elif command == c.CMD_AUTHORIZE:
-        client_id = wf.get_password(c.CLIENT_ID)
-        client_secret = wf.get_password(c.CLIENT_SECRET)
-        redirect_uri = wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
-
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
-            data={
-                "grant_type": "authorization_code",
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "code": query,
-                "redirect_uri": redirect_uri
-            }
-        )
-
-        log.debug("ID: %s" % client_id)
-        log.debug("Secret: %s" % client_secret)
         log.debug("Code: %s" % query)
-        log.debug("Redirect URI: %s" % redirect_uri)
 
-        try:
-            response.raise_for_status()
-        except HTTPError as e:
-            error_msg = "HTTP Request Failed: %d" % response.status_code
-            log.error(error_msg)
-            log.debug("%d - %s" % (e.code, e.reason))
-            print(error_msg)
-            return 0
-
-        if response.status_code == 200:
-            json = response.json()
-            log.debug(json)
-            wf.save_password(c.ACCESS_TOKEN, json["access_token"])
-            wf.save_password(c.REFRESH_TOKEN, json["refresh_token"])
-            print("Calendly Access granted.")
+        auth_result = calendly_client.authorize(query)
+        if auth_result is None:
+            notify(
+                "Calendly Access Rejected",
+                "Something went wrong. Check workflow's logs."
+            )
+        else:
+            wf.save_password(c.ACCESS_TOKEN, auth_result.get(c.ACCESS_TOKEN))
+            wf.save_password(c.REFRESH_TOKEN, auth_result.get("refresh_token"))
+            notify(
+                "Calendly Access Granted",
+                "This workflow can access Calendly now. Use 'cy' command to get started.")
 
     elif command == c.CMD_RESET:
         try:
@@ -94,6 +78,4 @@ def main(wf):
 
 if __name__ == u"__main__":
     wf = Workflow3()
-    log = wf.logger
-
     sys.exit(wf.run(main))

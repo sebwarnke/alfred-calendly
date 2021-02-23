@@ -3,45 +3,28 @@
 from urllib2 import HTTPError
 from workflow import Workflow3, web, PasswordNotFound
 import constants as c
+from calendly_client import CalendlyClient
 import sys
 
 log = None
+calendly_client = None
 
 
 def introspect_and_conditionally_refresh_access_token():
     try:
         log.debug("Introspecting Access Token")
-        client_id = wf.get_password(c.CLIENT_ID)
-        client_secret = wf.get_password(c.CLIENT_SECRET)
         access_token = wf.get_password(c.ACCESS_TOKEN)
         refresh_token = wf.get_password(c.REFRESH_TOKEN)
 
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_INTROSPECT_URI),
-            data={
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "token": access_token
-            }
-        )
-        response.raise_for_status()
+        response = calendly_client.introspect(access_token)
 
         response_json = response.json()
-
         if response_json["active"] is True:
             log.debug("Access Token still valid. No action required.")
         else:
             log.debug("Access Token expired, Refreshing...")
-            response = web.post(
-                url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
-                data={
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                    "refresh_token": refresh_token,
-                    "grant_type": "refresh_token"
-                }
-            )
-            response.raise_for_status()
+
+            response = calendly_client.refresh_token(refresh_token)
 
             if response.status_code == 200:
                 response_json = response.json()
@@ -66,4 +49,11 @@ def main(wf):
 if __name__ == '__main__':
     wf = Workflow3()
     log = wf.logger
+
+    calendly_client = CalendlyClient(
+        wf.get_password(c.CLIENT_ID),
+        wf.get_password(c.CLIENT_SECRET),
+        wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
+    )
+
     sys.exit(wf.run(main))
