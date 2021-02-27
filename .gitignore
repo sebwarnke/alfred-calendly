@@ -4,3 +4,4 @@ __pycache__
 tmp
 **/*.pyc
 **/.DS_Store
+**/*.alfredworkflow
