@@ -1,46 +1,22 @@
 #!/usr/bin/python
 # encoding: utf-8
 
-import sys
 import os
+import sys
 import webbrowser
-from workflow import Workflow3, web
-from urllib2 import HTTPError
-from api_helper import reset_workflow_config
-
+from calendly_client import CalendlyClient
 import constants as c
+from helper import reset_workflow_config
+from workflow import Workflow3
+from workflow.notify import notify
 
+calendly_client = None
 log = None
 
 
 def store_in_clipboard(clip):
     command = "printf %s | pbcopy" % clip.strip()
     os.system(command)
-
-
-def get_single_use_link(owner, access_token):
-    log.debug("in: get_single_use_link")
-    try:
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_SCHEDULING_LINK_URI),
-            headers={
-                "Authorization": "Bearer %s" % access_token,
-            },
-            data={
-                "max_event_count": 1,
-                "owner": owner,
-                "owner_type": "EventType"
-            }
-        )
-        log.debug("Response Status Code: %d" % response.status_code)
-        response.raise_for_status()
-
-        if response.status_code == 201:
-            return response.json()["resource"]["booking_url"]
-        else:
-            raise Exception("Error whilst getting single use link.")
-    except HTTPError:
-        raise Exception("Error whilst getting single use link.")
 
 
 def main(wf):
@@ -56,14 +32,13 @@ def main(wf):
     access_token = wf.get_password(c.ACCESS_TOKEN)
 
     if command == c.CMD_SINGLE_USE_LINK:
-        try:
-            single_use_link = get_single_use_link(query, access_token)
+            single_use_link = calendly_client.create_link(query, 1, access_token)
             store_in_clipboard(single_use_link)
-            print("Link stored in Clipboard: %s" % single_use_link)
-        except Exception as e:
-            print(e.message)
+            notify("Link stored in Clipboard", "%s" % single_use_link)
+
     elif command == c.CMD_BROWSE_URL:
         webbrowser.open(query)
+
     elif command == c.CMD_LOGOUT:
         try:
             reset_workflow_config(wf)
@@ -74,5 +49,11 @@ def main(wf):
 if __name__ == u"__main__":
     wf = Workflow3()
     log = wf.logger
+
+    calendly_client = CalendlyClient(
+            wf.get_password(c.CLIENT_ID),
+            wf.get_password(c.CLIENT_SECRET),
+            wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
+        )
 
     sys.exit(wf.run(main))

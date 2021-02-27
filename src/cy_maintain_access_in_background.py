@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 from urllib2 import HTTPError
-from workflow import Workflow3, web, PasswordNotFound
+from workflow import Workflow3, notify, PasswordNotFound
 import constants as c
 from calendly_client import CalendlyClient
 import sys
@@ -24,15 +24,13 @@ def introspect_and_conditionally_refresh_access_token():
         else:
             log.debug("Access Token expired, Refreshing...")
 
-            response = calendly_client.refresh_token(refresh_token)
+            result = calendly_client.refresh_token(refresh_token)
 
-            if response.status_code == 200:
-                response_json = response.json()
-                wf.save_password(c.ACCESS_TOKEN, response_json["access_token"])
-                wf.save_password(c.REFRESH_TOKEN, response_json["refresh_token"])
-                log.debug("Access Token refreshed.")
+            if result is not None:
+                wf.save_password(c.ACCESS_TOKEN, result.get(c.ACCESS_TOKEN))
+                wf.save_password(c.REFRESH_TOKEN, result.get(c.REFRESH_TOKEN))
             else:
-                log.warn("Refreshing failed. Status Code: %s" % response.status_code)
+                notify("Authentication Error", "Authentication could not be refreseh. Please, check the log.")
 
     except PasswordNotFound:
         log.error("Passwords not found in keychain.")
