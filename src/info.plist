@@ -68,7 +68,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Alfred Calendly</string>
+	<string>Calendly for Alfred</string>
 	<key>objects</key>
 	<array>
 		<dict>
