@@ -2,6 +2,7 @@ import unittest
 from mock import Mock
 from mock import patch
 from calendly_client import CalendlyClient
+from calendly_client import active_filter as ACTIVE_FILTER
 
 import constants as c
 
@@ -39,6 +40,30 @@ RESPONSE_GET_EVENT_TYPES_1 = {
     "pagination": {
         "count": 1,
         "next_page": "p2"
+    }
+}
+
+RESPONSE_GET_EVENT_TYPES_2 = {
+    "collection": [
+        {
+            "uri": "u4",
+            "active": True,
+            "scheduling_url": "s4"
+        },
+        {
+            "uri": "u5",
+            "active": True,
+            "scheduling_url": "s5"
+        },
+        {
+            "uri": "u6",
+            "active": False,
+            "scheduling_url": "s6"
+        }
+    ],
+    "pagination": {
+        "count": 1,
+        "next_page": None
     }
 }
 
@@ -90,7 +115,7 @@ class CalendlyClientTest(unittest.TestCase):
         assert r_false is False
 
     @patch("workflow.web.get")
-    def test_when_get_event_types_returns_200_then_all_event_types_are_returned(self, mock_web_get):
+    def test_when_get_event_types_returns_200_then_event_types_are_returned(self, mock_web_get):
         response_mock = Mock()
         response_mock.status_code = 200
 
@@ -98,6 +123,39 @@ class CalendlyClientTest(unittest.TestCase):
         mock_web_get.return_value = response_mock
 
         r = self.calendly_client.get_event_types_of_user("user", "access_tocken")
+
+        expected = {
+            "collection": [
+                {
+                    "uri": "u1",
+                    "active": True,
+                    "scheduling_url": "s1"
+                },
+                {
+                    "uri": "u2",
+                    "active": True,
+                    "scheduling_url": "s2"
+                },
+                {
+                    "uri": "u3",
+                    "active": False,
+                    "scheduling_url": "s3"
+                }
+            ],
+            "pagination": {
+                "count": 1,
+                "next_page": "p2"
+            }
+        }
+
+        self.assertDictEqual(r, expected)
+
+    @patch("calendly_client.CalendlyClient.get_event_types_of_user")
+    def test_when_get_all_event_types_then_all_event_types_are_returned(self, get_event_types_of_user):
+
+        get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
+
+        r = self.calendly_client.get_all_event_types_of_user("user", "access_tocken")
 
         expected = [
             {
@@ -114,10 +172,57 @@ class CalendlyClientTest(unittest.TestCase):
                 "uri": "u3",
                 "active": False,
                 "scheduling_url": "s3"
+            },
+            {
+                "uri": "u4",
+                "active": True,
+                "scheduling_url": "s4"
+            },
+            {
+                "uri": "u5",
+                "active": True,
+                "scheduling_url": "s5"
+            },
+            {
+                "uri": "u6",
+                "active": False,
+                "scheduling_url": "s6"
             }
         ]
 
         assert all(item in expected for item in r)
+
+    @patch("calendly_client.CalendlyClient.get_event_types_of_user")
+    def test_when_get_all_active_event_types_then_active_event_types_are_returned(self, get_event_types_of_user):
+
+        get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
+
+        r = self.calendly_client.get_all_event_types_of_user("user", "access_tocken", the_filter=ACTIVE_FILTER)
+
+        expected = [
+            {
+                "uri": "u1",
+                "active": True,
+                "scheduling_url": "s1"
+            },
+            {
+                "uri": "u2",
+                "active": True,
+                "scheduling_url": "s2"
+            },
+            {
+                "uri": "u4",
+                "active": True,
+                "scheduling_url": "s4"
+            },
+            {
+                "uri": "u5",
+                "active": True,
+                "scheduling_url": "s5"
+            }
+        ]
+
+        self.assertListEqual(r, expected)
 
 
 if __name__ == "__main__":
