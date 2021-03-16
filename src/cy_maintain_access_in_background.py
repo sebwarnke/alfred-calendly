@@ -16,10 +16,9 @@ def introspect_and_conditionally_refresh_access_token():
         access_token = wf.get_password(c.ACCESS_TOKEN)
         refresh_token = wf.get_password(c.REFRESH_TOKEN)
 
-        response = calendly_client.introspect(access_token)
+        is_active = calendly_client.introspect(access_token)
 
-        response_json = response.json()
-        if response_json["active"] is True:
+        if is_active:
             log.debug("Access Token still valid. No action required.")
         else:
             log.debug("Access Token expired, Refreshing...")
