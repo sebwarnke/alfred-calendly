@@ -263,6 +263,12 @@
 
 # Change Log:
 
+1.1.0
+- Improves loading of Event Types; as of now, the list of Event Types will now show all Event Types no matter how many you have.
+- The list of Event Types stops showing inactive Event Types and only shows the active ones.
+- The workflow carries a new name; "Calendly for Alfred"
+- Under the hood, massive overhaul of Calendly Client implementation
+
 1.0.2
 - Fixes a bug that prevented loading redirect uri during auth flow that was set by user. (Thanks to David, again)
 
@@ -329,7 +335,7 @@
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>1.1.0-feat-client</string>
+	<string>1.1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
