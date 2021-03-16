@@ -39,7 +39,7 @@ RESPONSE_GET_EVENT_TYPES_1 = {
     ],
     "pagination": {
         "count": 1,
-        "next_page": "p2"
+        "next_page": "https://api.calendly.com/event_types?count=20&page_token=A_TOKEN321&user=https%3A%2F%2Fapi.calendly.com%2Fusers%2ABC"
     }
 }
 
