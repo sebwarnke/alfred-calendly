@@ -3,6 +3,7 @@
 import sys
 from workflow import Workflow3
 from calendly_client import CalendlyClient
+from calendly_client import active_filter as ACTIVE_FILTER
 import constants as c
 
 log = None
@@ -23,7 +24,7 @@ def main(wf):
     current_user = calendly_client.get_current_user(access_token)
 
     if current_user is not None:
-        event_types = calendly_client.get_event_types_of_user(current_user,access_token)
+        event_types = calendly_client.get_all_event_types_of_user(current_user,access_token, the_filter=ACTIVE_FILTER)
         if event_types is not None:
             wf.cache_data(c.CACHE_EVENT_TYPES, event_types)
         else:
