@@ -144,7 +144,7 @@ class CalendlyClientTest(unittest.TestCase):
             ],
             "pagination": {
                 "count": 1,
-                "next_page": "p2"
+                "next_page": "https://api.calendly.com/event_types?count=20&page_token=A_TOKEN321&user=https%3A%2F%2Fapi.calendly.com%2Fusers%2ABC"
             }
         }
 
@@ -155,7 +155,7 @@ class CalendlyClientTest(unittest.TestCase):
 
         get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
 
-        r = self.calendly_client.get_all_event_types_of_user("user", "access_tocken")
+        r = self.calendly_client.get_all_event_types_of_user("user", "access_token")
 
         expected = [
             {
@@ -197,7 +197,7 @@ class CalendlyClientTest(unittest.TestCase):
 
         get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
 
-        r = self.calendly_client.get_all_event_types_of_user("user", "access_tocken", the_filter=ACTIVE_FILTER)
+        r = self.calendly_client.get_all_event_types_of_user("user", "access_token", the_filter=ACTIVE_FILTER)
 
         expected = [
             {
