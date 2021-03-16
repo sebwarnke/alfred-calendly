@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # encoding: utf-8
 
+import re
+
 import constants as c
 from workflow import Workflow3, web
 
@@ -119,24 +121,25 @@ class CalendlyClient:
     def get_all_event_types_of_user(self, user, access_token, the_filter=None):
         log.debug("in: get_all_event_types_of_user")
 
-        next_page_uri = None
-
         event_types = []
+        page_token = None
 
         while True:
-            r = self.get_event_types_of_user(user, access_token, next_page_uri)
+            r = self.get_event_types_of_user(user, access_token, page_token)
             next_page_uri = r["pagination"]["next_page"]
 
+            if the_filter is not None:
+                event_types = filter(the_filter, event_types)
             event_types.extend(r.get("collection"))
 
             if next_page_uri is None:
                 break
 
-        if the_filter is not None:
-            event_types = filter(the_filter, event_types)
+            match_page_token = re.search(".*page_token=([^&]*)", next_page_uri)
+            if match_page_token is not None:
+                page_token = match_page_token.group(1)
 
         return event_types
-
 
     def get_current_user(self, access_token):
         log.debug("in: get_current_user")
