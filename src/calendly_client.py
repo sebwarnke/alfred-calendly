@@ -128,8 +128,6 @@ class CalendlyClient:
             r = self.get_event_types_of_user(user, access_token, page_token)
             next_page_uri = r["pagination"]["next_page"]
 
-            if the_filter is not None:
-                event_types = filter(the_filter, event_types)
             event_types.extend(r.get("collection"))
 
             if next_page_uri is None:
@@ -138,6 +136,9 @@ class CalendlyClient:
             match_page_token = re.search(".*page_token=([^&]*)", next_page_uri)
             if match_page_token is not None:
                 page_token = match_page_token.group(1)
+
+        if the_filter is not None:
+            event_types = filter(the_filter, event_types)
 
         return event_types
 
