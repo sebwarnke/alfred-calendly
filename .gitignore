@@ -5,3 +5,5 @@ tmp
 **/*.pyc
 **/.DS_Store
 **/*.alfredworkflow
+.vscode
+.pytest_cache
