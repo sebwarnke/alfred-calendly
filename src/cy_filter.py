@@ -6,6 +6,7 @@ import sys
 from workflow import Workflow3, PasswordNotFound, ICON_ACCOUNT, ICON_EJECT
 from workflow.background import run_in_background
 import constants as c
+from migration import process_migration
 
 log = None
 
@@ -18,11 +19,6 @@ def get_search_key_for_event_types(event_type):
     return u' '.join(elements)
 
 
-def maintain_oauth_access():
-    cmd = ['/usr/bin/python', wf.workflowfile('cy_maintain_access_in_background.py')]
-    run_in_background('maintain_oauth_access', cmd)
-
-
 def preload_event_types_regularly():
     if not wf.cached_data_fresh(c.CACHE_EVENT_TYPES, max_age=300):
         log.debug("Event Types Cache expired.")
@@ -33,9 +29,6 @@ def preload_event_types_regularly():
 
 
 def verify_configuration_exists():
-    wf.get_password(c.CLIENT_ID)
-    wf.get_password(c.CLIENT_SECRET)
-    wf.get_password(c.REFRESH_TOKEN)
     wf.get_password(c.ACCESS_TOKEN)
 
 
@@ -64,7 +57,6 @@ def main(wf):
         wf.send_feedback()
         return 0
 
-    maintain_oauth_access()
     preload_event_types_regularly()
 
     user_input = wf.args[0]
@@ -78,7 +70,8 @@ def main(wf):
         event_types = wf.cached_data(c.CACHE_EVENT_TYPES, None, max_age=0)
 
         if query != "":
-            event_types = wf.filter(query, event_types, key=get_search_key_for_event_types, min_score=20)
+            event_types = wf.filter(
+                query, event_types, key=get_search_key_for_event_types, min_score=20)
 
         if event_types is None or len(event_types) == 0:
             wf.add_item(
@@ -97,7 +90,8 @@ def main(wf):
                     "cmd",
                     subtitle="Open Static Link of this Event Type in Browser.",
                     valid=True,
-                    arg="%s %s" % (c.CMD_BROWSE_URL, event_type["scheduling_url"])
+                    arg="%s %s" % (c.CMD_BROWSE_URL,
+                                   event_type["scheduling_url"])
                 )
         wf.send_feedback()
     elif command == c.CMD_LOGOUT:
@@ -134,4 +128,5 @@ if __name__ == "__main__":
         }
     )
     log = wf.logger
+    process_migration(wf)
     sys.exit(wf.run(main))

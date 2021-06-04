@@ -31,10 +31,12 @@ def main(wf):
 
     access_token = wf.get_password(c.ACCESS_TOKEN)
 
+    calendly_client = CalendlyClient(access_token)
+
     if command == c.CMD_SINGLE_USE_LINK:
-            single_use_link = calendly_client.create_link(query, 1, access_token)
-            store_in_clipboard(single_use_link)
-            notify("Link stored in Clipboard", "%s" % single_use_link)
+        single_use_link = calendly_client.create_link(query, 1)
+        store_in_clipboard(single_use_link)
+        notify("Link stored in Clipboard", "%s" % single_use_link)
 
     elif command == c.CMD_BROWSE_URL:
         webbrowser.open(query)
@@ -49,11 +51,5 @@ def main(wf):
 if __name__ == u"__main__":
     wf = Workflow3()
     log = wf.logger
-
-    calendly_client = CalendlyClient(
-            wf.get_password(c.CLIENT_ID),
-            wf.get_password(c.CLIENT_SECRET),
-            wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
-        )
 
     sys.exit(wf.run(main))

@@ -152,7 +152,6 @@ class CalendlyClientTest(unittest.TestCase):
 
     @patch("calendly_client.CalendlyClient.get_event_types_of_user")
     def test_when_get_all_event_types_then_all_event_types_are_returned(self, get_event_types_of_user):
-
         get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
 
         r = self.calendly_client.get_all_event_types_of_user("user", "access_token")
@@ -194,7 +193,6 @@ class CalendlyClientTest(unittest.TestCase):
 
     @patch("calendly_client.CalendlyClient.get_event_types_of_user")
     def test_when_get_all_active_event_types_then_active_event_types_are_returned(self, get_event_types_of_user):
-
         get_event_types_of_user.side_effect = [RESPONSE_GET_EVENT_TYPES_1, RESPONSE_GET_EVENT_TYPES_2]
 
         r = self.calendly_client.get_all_event_types_of_user("user", "access_token", the_filter=ACTIVE_FILTER)

@@ -14,86 +14,10 @@ def active_filter(event_type):
 
 
 class CalendlyClient:
+    def __init__(self,access_token):
+        self.access_token = access_token
 
-    client_id = ""
-    client_secret = ""
-    redirect_uri = ""
-
-    def __init__(self, client_id, client_secret, redirect_uri):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect_uri = redirect_uri
-
-    def authorize(self, code):
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
-            data={
-                "grant_type": "authorization_code",
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "code": code,
-                "redirect_uri": self.redirect_uri
-            }
-        )
-        response.raise_for_status()
-
-        if response.status_code == 200:
-            return {
-                c.ACCESS_TOKEN: response.json()["access_token"],
-                c.REFRESH_TOKEN: response.json()["refresh_token"]
-            }
-        else:
-            log.error("Authorization request failed. Calendly returned status [%s]. Response payload below." % response.status_code)
-            log.error(response.json())
-            return None
-
-    """Introspects the Token. Returns True only when request succeeded and token is still active"""
-    def introspect(self, access_token):
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_INTROSPECT_URI),
-            data={
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "token": access_token
-            }
-        )
-        response.raise_for_status()
-
-        if response.status_code == 200:
-            return response.json()["active"]
-        else:
-            log.error("Introspecting access token failed. Calendly returned status [%s]. Response payload below." % response.status_code)
-            log.error(response.json())
-            return False
-
-    def refresh_token(self, refresh_token):
-        response = web.post(
-            url="%s%s" % (c.CALENDLY_AUTH_BASE_URL, c.CALENDLY_TOKEN_URI),
-            data={
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "refresh_token": refresh_token,
-                "grant_type": "refresh_token"
-            }
-        )
-        response.raise_for_status()
-
-        if response.status_code == 200:
-            log.debug("Access Token refreshed.")
-            response_json = response.json()
-            return {
-                c.ACCESS_TOKEN: response_json["access_token"],
-                c.REFRESH_TOKEN: response_json["refresh_token"]
-            }
-        else:
-            log.error("Refreshing the access token failed. Calendly returned status [%s]. Response payload below." % response.status_code)
-            log.error(response.json())
-            return None
-
-    def create_scheduling_link(self):
-        pass
-
-    def get_event_types_of_user(self, user, access_token, page_token=None):
+    def get_event_types_of_user(self, user, page_token=None):
         log.debug("in: get_event_types_of_user")
 
         request_params = {
@@ -105,7 +29,7 @@ class CalendlyClient:
         response = web.get(
             url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_EVENT_TYPES_URI),
             headers={
-                "Authorization": "Bearer %s" % access_token,
+                "Authorization": "Bearer %s" % self.access_token,
             },
             params=request_params
         )
@@ -114,18 +38,19 @@ class CalendlyClient:
         if response.status_code == 200:
             return response.json()
         else:
-            log.error("Getting Event Types failed. Calendly returned status [%s]. Response payload below." % response.status_code)
+            log.error(
+                "Getting Event Types failed. Calendly returned status [%s]. Response payload below." % response.status_code)
             log.error(response.json())
             return None
 
-    def get_all_event_types_of_user(self, user, access_token, the_filter=None):
+    def get_all_event_types_of_user(self, user, the_filter=None):
         log.debug("in: get_all_event_types_of_user")
 
         event_types = []
         page_token = None
 
         while True:
-            r = self.get_event_types_of_user(user, access_token, page_token)
+            r = self.get_event_types_of_user(user, page_token)
             next_page_uri = r["pagination"]["next_page"]
 
             event_types.extend(r.get("collection"))
@@ -142,12 +67,12 @@ class CalendlyClient:
 
         return event_types
 
-    def get_current_user(self, access_token):
+    def get_current_user(self):
         log.debug("in: get_current_user")
         response = web.get(
             url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_CURRENT_USER_URI),
             headers={
-                "Authorization": "Bearer %s" % access_token,
+                "Authorization": "Bearer %s" % self.access_token,
             }
         )
         response.raise_for_status()
@@ -155,18 +80,19 @@ class CalendlyClient:
         if response.status_code == 200:
             return response.json()["resource"]["uri"]
         else:
-            log.error("Getting current user failed. Calendly returned status [%s]. Response payload below." % response.status_code)
+            log.error(
+                "Getting current user failed. Calendly returned status [%s]. Response payload below." % response.status_code)
             log.error(response.json())
             return None
 
-    def create_link(self, event_type, event_count, access_token):
+    def create_link(self, event_type, event_count):
         log.debug("in: create_link")
         log.debug("Event Type: [%s], Max. Event Count: [%d]" % (event_type, event_count))
 
         response = web.post(
             url="%s%s" % (c.CALENDLY_API_BASE_URL, c.CALENDLY_SCHEDULING_LINK_URI),
             headers={
-                "Authorization": "Bearer %s" % access_token,
+                "Authorization": "Bearer %s" % self.access_token,
             },
             data={
                 "max_event_count": event_count,

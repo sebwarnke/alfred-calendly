@@ -14,17 +14,12 @@ def main(wf):
     log.debug("Loading Event Types for current user.")
 
     access_token = wf.get_password(c.ACCESS_TOKEN)
+    calendly_client = CalendlyClient(access_token)
 
-    calendly_client = CalendlyClient(
-            wf.get_password(c.CLIENT_ID),
-            wf.get_password(c.CLIENT_SECRET),
-            wf.settings.get(c.CONF_REDIRECT_URL, "http://localhost")
-        )
-
-    current_user = calendly_client.get_current_user(access_token)
+    current_user = calendly_client.get_current_user()
 
     if current_user is not None:
-        event_types = calendly_client.get_all_event_types_of_user(current_user,access_token, the_filter=ACTIVE_FILTER)
+        event_types = calendly_client.get_all_event_types_of_user(current_user, the_filter=ACTIVE_FILTER)
         if event_types is not None:
             wf.cache_data(c.CACHE_EVENT_TYPES, event_types)
         else:

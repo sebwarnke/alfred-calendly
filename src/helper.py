@@ -2,6 +2,7 @@
 
 import constants as c
 
+
 def reset_workflow_config(wf):
     try:
         wf.clear_settings()
