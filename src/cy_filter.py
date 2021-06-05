@@ -73,7 +73,7 @@ def main(wf):
             else:
                 wf.add_item(
                     title="Hit ENTER to save your Personal Access Token.",
-                    subtitle="You can now enter the command 'cy' to use this workflow.",
+                    subtitle="You can now use the workflow. Happy scheduling!",
                     arg="%s %s" % (c.CMD_SET_ACCESS_TOKEN, query),
                     valid=True
                 )
