@@ -1,4 +1,4 @@
-# Alfred-Calendly - An Alfred Workflow for Calendly API v2
+# Alfred-Calendly - Access Calendly via Alfred
 
 ## Use Cases
 
@@ -10,6 +10,7 @@
 
 ## Preparation
 
+- You need an Alfred Powerpack License.
 - To use this workflow you need a payed Calendly subscription.
 - During the course of the initial setup you are going to be asked to generate a Personal Access Token for Calendly.
 
