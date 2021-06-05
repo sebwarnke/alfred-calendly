@@ -28,10 +28,6 @@ def preload_event_types_regularly():
         log.debug("Event Types in Cache still fresh.")
 
 
-def verify_configuration_exists():
-    wf.get_password(c.ACCESS_TOKEN)
-
-
 def main(wf):
     # type: (Workflow3) -> None
 
@@ -45,26 +41,46 @@ def main(wf):
             autocomplete="workflow:update"
         )
 
-    try:
-        verify_configuration_exists()
-    except PasswordNotFound:
-        wf.add_item(
-            title="Before you can start, run 'cya'",
-            subtitle="You need to authenticate the workflow towards Calendly. Run 'cya' and follow the instructions.",
-            valid=False,
-            icon=ICON_ACCOUNT
-        )
-        wf.send_feedback()
-        return 0
-
-    preload_event_types_regularly()
-
     user_input = wf.args[0]
     command = query = ""
     if len(user_input) > 0:
         log.debug("Input: %s" % user_input)
         command = user_input.split()[0]
         query = user_input[len(command) + 1:]
+
+    try:
+        access_token = wf.get_password(c.ACCESS_TOKEN)
+    except PasswordNotFound:
+        access_token = None
+
+    if access_token is None:
+        if command == "":
+            wf.add_item(
+                title="Personal Access Token required.",
+                subtitle="Hit ENTER to proceed.",
+                autocomplete="%s " % c.CMD_SET_ACCESS_TOKEN,
+                valid=False,
+                icon=ICON_ACCOUNT
+            )
+        elif command == c.CMD_SET_ACCESS_TOKEN:
+            if query == '':
+                wf.add_item(
+                    title="Paste your Personal Access Token here.",
+                    subtitle="If you don't have one, simply press ENTER.",
+                    arg=c.CMD_OBTAIN_ACCESS_TOKEN,
+                    valid=True
+                )
+            else:
+                wf.add_item(
+                    title="Hit ENTER to save your Personal Access Token.",
+                    subtitle="You can now enter the command 'cy' to use this workflow.",
+                    arg="%s %s" % (c.CMD_SET_ACCESS_TOKEN, query),
+                    valid=True
+                )
+        wf.send_feedback()
+        return 0
+
+    preload_event_types_regularly()
 
     if command == c.CMD_SINGLE_USE_LINK:
         event_types = wf.cached_data(c.CACHE_EVENT_TYPES, None, max_age=0)

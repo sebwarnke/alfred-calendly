@@ -10,7 +10,6 @@ from helper import reset_workflow_config
 from workflow import Workflow3
 from workflow.notify import notify
 
-calendly_client = None
 log = None
 
 
@@ -28,6 +27,16 @@ def main(wf):
     query = user_input[len(command) + 1:]
 
     log.debug("%s : %s" % (command, query))
+
+    if command == c.CMD_OBTAIN_ACCESS_TOKEN:
+        webbrowser.open(c.CALENDLY_API_WEB_HOOKS_URL)
+        return 0;
+    elif command == c.CMD_SET_ACCESS_TOKEN:
+        wf.save_password(c.ACCESS_TOKEN, query)
+        notify(
+            "Personal Access Tolen saved to Keychain",
+            "This workflow can access Calendly now. Use 'cy' command to get started.")
+        return 0;
 
     access_token = wf.get_password(c.ACCESS_TOKEN)
 
