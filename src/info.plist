@@ -144,6 +144,12 @@
 
 # Change Log:
 
+2.0.0
+- This update fully refactors the authentication mechanism towards Personal Access Tokens and abandons OAuth as per recommendation by Calendly.
+- It now shows the new Calendly Logo.
+
+DURING THE UPDATE THE WORKFLOW REMOVES ALL PREVIOUSLY STORED OAUTH RELATED CREDENTIALS. YOU MUST FRESHLY SIGN IN USING PERSONAL ACCESS TOKENS. PLEASE FOLLOW THE INSTRUCTIONS THE WORKFLOW PROVIDES.
+
 1.1.0
 - Improves loading of Event Types; as of now, the list of Event Types will now show all Event Types no matter how many you have.
 - The list of Event Types stops showing inactive Event Types and only shows the active ones.
