@@ -10,7 +10,9 @@ from migration import process_migration
 
 log = None
 
-
+'''
+Concatenates Name and Scheduling URL of a event type to a searchable token.
+'''
 def get_search_key_for_event_types(event_type):
     elements = [
         event_type['name'],
@@ -19,6 +21,9 @@ def get_search_key_for_event_types(event_type):
     return u' '.join(elements)
 
 
+'''
+Starts a thread that asynchronously checks for updated event types from Calendly once the cache is older than 300 s
+'''
 def preload_event_types_regularly():
     if not wf.cached_data_fresh(c.CACHE_EVENT_TYPES, max_age=300):
         log.debug("Event Types Cache expired.")
@@ -33,6 +38,7 @@ def main(wf):
 
     log.debug("Current Version: %s", wf.version)
 
+    # Show notification when new workflow version exists
     if wf.update_available:
         wf.add_item(
             title="New Workflow Version Available!",
@@ -41,6 +47,7 @@ def main(wf):
             autocomplete="workflow:update"
         )
 
+    # Process user input from Alfred
     user_input = wf.args[0]
     command = query = ""
     if len(user_input) > 0:
@@ -48,11 +55,15 @@ def main(wf):
         command = user_input.split()[0]
         query = user_input[len(command) + 1:]
 
+    # Check whether the workflow has an access token of Calendly set
     try:
         access_token = wf.get_password(c.ACCESS_TOKEN)
     except PasswordNotFound:
         access_token = None
 
+    '''+++++++++++++++++++++++++++++++++++++++++++++++++
+        Configuration Phase
+    +++++++++++++++++++++++++++++++++++++++++++++++++'''
     if access_token is None:
         if command == "":
             wf.add_item(
@@ -80,15 +91,24 @@ def main(wf):
         wf.send_feedback()
         return 0
 
+    '''+++++++++++++++++++++++++++++++++++++++++++++++++
+        Production Phase
+    +++++++++++++++++++++++++++++++++++++++++++++++++'''
     preload_event_types_regularly()
 
+    '''
+    Single Use Link Menu
+    '''
     if command == c.CMD_SINGLE_USE_LINK:
+        # get all event types from cache
         event_types = wf.cached_data(c.CACHE_EVENT_TYPES, None, max_age=0)
 
+        # if search query entered then filter the event types list
         if query != "":
             event_types = wf.filter(
                 query, event_types, key=get_search_key_for_event_types, min_score=20)
 
+        # Show the event types
         if event_types is None or len(event_types) == 0:
             wf.add_item(
                 title="No Event Types found.",
@@ -110,6 +130,9 @@ def main(wf):
                                    event_type["scheduling_url"])
                 )
         wf.send_feedback()
+    # ++++++++++++++++++++++
+    # Logout Menu
+    # ++++++++++++++++++++++
     elif command == c.CMD_LOGOUT:
         wf.add_item(
             title="Logout from Calendly",
@@ -119,6 +142,10 @@ def main(wf):
             icon=ICON_EJECT
         )
         wf.send_feedback()
+
+    # ++++++++++++++++++++++
+    # Main Menu
+    # ++++++++++++++++++++++
     else:
         wf.add_item(
             title="Create Single-Use-Link",
