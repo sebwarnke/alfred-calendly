@@ -3,7 +3,7 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sebwarnke/alfred-calendly)](https://github.com/sebwarnke/alfred-calendly/releases) 
 [![GitHub](https://img.shields.io/github/license/sebwarnke/alfred-calendly)](https://github.com/sebwarnke/alfred-calendly/blob/primary/LICENSE) 
 [![GitHub stars](https://img.shields.io/github/stars/sebwarnke/alfred-calendly)](https://github.com/sebwarnke/alfred-calendly/stargazers)
-[![GitHub all releases](https://img.shields.io/github/downloads/sebwarnke/alfred-calendly/total)](https://img.shields.io/github/v/release/sebwarnke/alfred-calendly)
+[![GitHub all releases](https://img.shields.io/github/downloads/sebwarnke/alfred-calendly/total)](https://github.com/sebwarnke/alfred-calendly/releases)
 
 
 ## Use Cases
