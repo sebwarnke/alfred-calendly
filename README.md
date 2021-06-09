@@ -1,3 +1,5 @@
+![GitHub all releases](https://img.shields.io/github/downloads/sebwarnke/alfred-calendly/total)
+
 # Alfred-Calendly - Access Calendly via Alfred
 
 ## Use Cases
