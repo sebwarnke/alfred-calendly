@@ -8,6 +8,9 @@ import constants as c
 
 log = None
 
+'''
+This file is started as background thread. An takes care of loading event types into the cache asynchronously.
+'''
 
 def main(wf):
     # type: (Workflow3) -> None
