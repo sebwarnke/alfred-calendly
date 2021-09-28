@@ -100,12 +100,15 @@ class CalendlyClient:
                 "owner_type": "EventType"
             }
         )
-        response.raise_for_status()
 
-        if response.status_code == 201:
-            return response.json()["resource"]["booking_url"]
-        else:
+        if response.status_code != 201:
             log.error(
                 "Creating a link failed. Calendly returned status [%s]. Response payload below." % response.status_code)
             log.error(response.json())
-            return None
+            raise CalendlyClientException
+
+        return response.json()["resource"]["booking_url"]
+
+
+class CalendlyClientException(Exception):
+    pass
