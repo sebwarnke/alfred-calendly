@@ -38,7 +38,7 @@
 	<key>createdby</key>
 	<string>Sebastian Warnke</string>
 	<key>description</key>
-	<string></string>
+	<string>Schedule Calendly Events with Alfred</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -140,7 +140,7 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>This workflow integrates Calendly API v2.
+	<string>Schedule Calendly Events with Alfred
 
 # Change Log:
 
