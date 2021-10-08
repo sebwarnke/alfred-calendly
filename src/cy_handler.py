@@ -28,9 +28,11 @@ def main(wf):
 
     log.debug("%s : %s" % (command, query))
 
+    # Open Calendly's Access Token Management Page in the Browser and return!
     if command == c.CMD_OBTAIN_ACCESS_TOKEN:
         webbrowser.open(c.CALENDLY_API_WEB_HOOKS_URL)
         return 0;
+    # Save the access token to Key Chain and return!
     elif command == c.CMD_SET_ACCESS_TOKEN:
         wf.save_password(c.ACCESS_TOKEN, query)
         notify(
@@ -38,18 +40,23 @@ def main(wf):
             "This workflow can access Calendly now. Use 'cy' command to get started.")
         return 0;
 
+    # Everything below only executes when an access tolen is set
+
     access_token = wf.get_password(c.ACCESS_TOKEN)
 
     calendly_client = CalendlyClient(access_token)
 
+    # Create Single Use Link and store in clipboard
     if command == c.CMD_SINGLE_USE_LINK:
         single_use_link = calendly_client.create_link(query, 1)
         store_in_clipboard(single_use_link)
         notify("Link stored in Clipboard", "%s" % single_use_link)
 
+    # Open static URL of Event Type in Browser
     elif command == c.CMD_BROWSE_URL:
         webbrowser.open(query)
 
+    # Remove all configuration -> log out
     elif command == c.CMD_LOGOUT:
         try:
             reset_workflow_config(wf)
