@@ -147,6 +147,7 @@
 2.1.0
 HIT COUNTERS
 - The list of event types is ordered by the number of link creations of a certain event type. The more often an event type has been used the higher it shows in the list.
+- The hit count shows next to the event type's scheduling URL in the event types list.
 
 2.0.0
 - This update fully refactors the authentication mechanism towards Personal Access Tokens and abandons OAuth as per recommendation by Calendly.
