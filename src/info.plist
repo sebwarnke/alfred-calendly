@@ -144,6 +144,10 @@
 
 # Change Log:
 
+2.1.0
+HIT COUNTERS
+- The list of event types is ordered by the number of link creations of a certain event type. The more often an event type has been used the higher it shows in the list.
+
 2.0.0
 - This update fully refactors the authentication mechanism towards Personal Access Tokens and abandons OAuth as per recommendation by Calendly.
 - It now shows the new Calendly Logo.
@@ -201,7 +205,7 @@ DURING THE UPDATE THE WORKFLOW REMOVES ALL PREVIOUSLY STORED OAUTH RELATED CREDE
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>2.0.0</string>
+	<string>2.1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sebwarnke/alfred-calendly</string>
 </dict>
