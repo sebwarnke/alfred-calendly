@@ -1,6 +1,8 @@
 import unittest
+
 from mock import Mock
 from mock import patch
+
 from calendly_client import CalendlyClient
 from calendly_client import active_filter as ACTIVE_FILTER
 

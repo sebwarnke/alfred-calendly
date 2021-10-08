@@ -11,6 +11,7 @@ ACCESS_TOKEN = "calendly_alfred_access_token"
 
 # Settings
 CONF_REDIRECT_URL = "redirect_url"
+CONF_EVENT_STATS = "event_stats"
 
 # Cache IDs
 CACHE_EVENT_TYPES = "event_types"

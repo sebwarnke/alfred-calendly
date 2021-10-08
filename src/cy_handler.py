@@ -9,6 +9,7 @@ import constants as c
 from helper import reset_workflow_config
 from workflow import Workflow3
 from workflow.notify import notify
+from controller import Controller
 
 log = None
 
@@ -42,13 +43,11 @@ def main(wf):
 
     # Everything below only executes when an access tolen is set
 
-    access_token = wf.get_password(c.ACCESS_TOKEN)
-
-    calendly_client = CalendlyClient(access_token)
+    controller = Controller(wf)
 
     # Create Single Use Link and store in clipboard
     if command == c.CMD_SINGLE_USE_LINK:
-        single_use_link = calendly_client.create_link(query, 1)
+        single_use_link = controller.create_single_use_link(query)
         store_in_clipboard(single_use_link)
         notify("Link stored in Clipboard", "%s" % single_use_link)
 

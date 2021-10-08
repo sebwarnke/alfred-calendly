@@ -116,10 +116,13 @@ def main(wf):
                 valid=False
             )
         else:
-            for event_type in event_types:
+
+            sorted_event_types = sorted(event_types, key=lambda event_type: event_type["event_stats"] if "event_stats" in event_type else None, reverse=True)
+
+            for event_type in sorted_event_types:
                 wf.add_item(
                     title=event_type["name"],
-                    subtitle=event_type["scheduling_url"],
+                    subtitle="%s || Hits: %d" % (event_type["scheduling_url"], event_type["event_stats"] if "event_stats" in event_type else 0),
                     valid=True,
                     arg="%s %s" % (c.CMD_SINGLE_USE_LINK, event_type["uri"])
                 ).add_modifier(
