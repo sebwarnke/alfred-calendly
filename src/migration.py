@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+from workflow import Workflow3
 from workflow.update import Version
 
 
