@@ -1,10 +1,12 @@
+**[!!!] This Workflow requires Python 2.X which is not part of MacOS 12.3+ anymore. I am planning to reimplement from scratch in the future.[!!!]**
+
+
 # Calendly for Alfred || Schedule Calendly Events with Alfred
 [![Alfred Workflow](https://img.shields.io/badge/Alfred-Workflow-5b2585)](https://alfredapp.com)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sebwarnke/alfred-calendly?label=latest%20release)](https://github.com/sebwarnke/alfred-calendly/releases) 
 [![GitHub](https://img.shields.io/github/license/sebwarnke/alfred-calendly)](https://github.com/sebwarnke/alfred-calendly/blob/primary/LICENSE) 
 [![GitHub stars](https://img.shields.io/github/stars/sebwarnke/alfred-calendly)](https://github.com/sebwarnke/alfred-calendly/stargazers)
 [![GitHub all releases](https://img.shields.io/github/downloads/sebwarnke/alfred-calendly/total)](https://github.com/sebwarnke/alfred-calendly/releases)
-
 
 ## Use Cases
 
